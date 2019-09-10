@@ -5,28 +5,24 @@ let
   mkHook = {
     name,
     PATH ? [],
-    changeScript ? null,
+    skipScript ? null,
     hookScript
-  } : let path = pkgs.writeShellScriptBin name ''
+  } : let 
+
+    path = pkgs.writeShellScriptBin name ''
 
     set -u
     set -o pipefail
     
     ${lib.optionalString (PATH != []) ''export PATH=$PATH:${ lib.makeBinPath PATH } ''  }
 
-
-    changedFiles=""
-    ${lib.optionalString (changeScript != null) ''
-      changedFile="$(
-        ${changeScript}
-      )"
-
-      if [ -z "$changedFiles" ]; then
+    ${lib.optionalString (skipScript != null) ''
+      if ! "${pkgs.writeShellScriptBin "${name}-skip" skipScript}/bin/${name}-skip"; then
         exit 123
       fi
     ''}
   
-    if ! ( ${hookScript} ); then
+    if ! "${pkgs.writeShellScriptBin "${name}-hook" hookScript}/bin/${name}-hook"; then
       exit 1
     fi
     exit 0
