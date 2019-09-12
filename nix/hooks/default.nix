@@ -8,12 +8,13 @@ let
     hookScript
   } : let 
 
+    binPath = [ pkgs.git pkgs.coreutils pkgs.bash ] ++ PATH;
     path = pkgs.writeShellScriptBin name ''
 
     set -eu
     set -o pipefail
     
-    ${lib.optionalString (PATH != []) ''export PATH=$PATH:${ lib.makeBinPath PATH } ''  }
+    export PATH=$PATH:${ lib.makeBinPath binPath }
 
     exec "${pkgs.writeShellScriptBin "${name}-hook" hookScript}/bin/${name}-hook"
   '';
