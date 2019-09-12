@@ -33,12 +33,16 @@ let
   }; 
 
   terraform_hook = import ./terraform.nix { inherit pkgs lib mkHook; };
+  scalafmt_hook = import ./scalafmt.nix { inherit pkgs lib mkHook; };
   
 in {
 
   mkHook = mkHook ;
 
   mkTerraform = terraform_hook.mkTerraform ;
-
   terraform = terraform_hook.mkTerraform { terraformPkg = pkgs.terraform ; };
+
+  mkScalafmt = scalafmt_hook.mkScalafmt;
+  scalafmt = scalafmt_hook.mkScalafmt { config = null; configStr = null; scalafmtPkg = pkgs.scalafmt; };
+
 }
