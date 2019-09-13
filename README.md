@@ -22,6 +22,26 @@ This project ships with a small variety of hooks included (more to come)
    (requires scalafmt >= 2.0.1 included in nixpkgs 19.09 and above)
  * [shellcheck](https://www.shellcheck.net/)
 
+### Customizing existing hooks
+Almost all builtin hooks also expose a hook builder function that can be used to customize the hook.
+If you want to use the existing Terraform hook for example but require explicit Terraform 0.12 support,
+you can simply pass that package into the terraform hook builder function:
+```nix
+let
+  pkgs = import <nixpkgs> {};
+  pre-commit = (import ./. {});
+
+  terraformHook = pre-commit.hooks.mkTerraform { terraformPkg = pkgs.terraform_0_12; };
+
+  shellHook = pre-commit.shellHook { hooks = [ terraformHook ]; };
+in
+pkgs.mkShell {
+  inherit shellHook;
+}
+```
+By convention, the builder for a `hook` is always called `mkHook`.
+For ways on how to customize a specific hook, please refer to the code in the [hooks directory](nix/hooks/).
+
 ### Custom hooks
 To ease the development of custom hooks, we expose the `mkHook` build helper:
 ```nix
