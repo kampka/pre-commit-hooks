@@ -20,6 +20,7 @@ This project ships with a small variety of hooks included (more to come)
  * [Terraform](https://www.terraform.io/docs/commands/fmt.html)
  * [scalafmt](https://scalameta.org/scalafmt/)  
    (requires scalafmt >= 2.0.1 included in nixpkgs 19.09 and above)
+ * [shellcheck](https://www.shellcheck.net/)
 
 ### Custom hooks
 To ease the development of custom hooks, we expose the `mkHook` build helper:

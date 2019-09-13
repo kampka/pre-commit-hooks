@@ -25,6 +25,7 @@ let
 
   terraform_hook = import ./terraform.nix { inherit pkgs lib mkHook; };
   scalafmt_hook = import ./scalafmt.nix { inherit pkgs lib mkHook; };
+  shellcheck_hook = import ./shellcheck.nix { inherit pkgs lib mkHook; };
   
 in {
 
@@ -36,4 +37,6 @@ in {
   mkScalafmt = scalafmt_hook.mkScalafmt;
   scalafmt = scalafmt_hook.mkScalafmt { config = null; configStr = null; scalafmtPkg = pkgs.scalafmt; };
 
+  mkShellcheck = shellcheck_hook.mkShellcheck;
+  shellcheck = shellcheck_hook.mkShellcheck { shellcheckPkg = pkgs.shellcheck; };
 }
