@@ -21,6 +21,8 @@ This project ships with a small variety of hooks included (more to come)
  * [scalafmt](https://scalameta.org/scalafmt/)  
    (requires scalafmt >= 2.0.1 included in nixpkgs 19.09 and above)
  * [shellcheck](https://www.shellcheck.net/)
+ * [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)  
+   (currently built from source upon first use until v1.0 is available in [nixpkgs](https://github.com/nixos/nixpkgs))
 
 ### Customizing existing hooks
 Almost all builtin hooks also expose a hook builder function that can be used to customize the hook.
