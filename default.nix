@@ -2,7 +2,8 @@
 let
   lib = pkgs.lib;
   nix = import ./nix { inherit pkgs lib; };
-in {
+in
+{
   shellHook = nix.install;
 
   hooks = nix.hooks;

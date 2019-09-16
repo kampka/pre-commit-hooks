@@ -1,13 +1,14 @@
 { pkgs, lib, mkHook, ... }:
 
-let 
-  hookScript = {terraformPkg }: ''
+let
+  hookScript = { terraformPkg }: ''
     cd $GIT_DIR
     ${terraformPkg}/bin/terraform fmt --check=True
   '';
-in {
-  mkTerraform = { terraformPkg }: mkHook{
+in
+{
+  mkTerraform = { terraformPkg }: mkHook {
     name = "terraform";
-    hookScript = hookScript { inherit terraformPkg ; };
+    hookScript = hookScript { inherit terraformPkg; };
   };
 }

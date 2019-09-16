@@ -3,7 +3,7 @@ let
 
   pre-commit = (import ./. {});
 
-  shellHook = pre-commit.shellHook {};
+  shellHook = pre-commit.shellHook { hooks = [ pre-commit.hooks.nixpkgsFmt ]; };
 in
 
 pkgs.mkShell {

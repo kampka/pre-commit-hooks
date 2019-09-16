@@ -1,10 +1,10 @@
-{ pkgs, lib, ...}:
+{ pkgs, lib, ... }:
 
 with lib;
 
 let
 
-  pre-commit = { hooks ? [] } : pkgs.writeScriptBin "pre-commit" ''
+  pre-commit = { hooks ? [] }: pkgs.writeScriptBin "pre-commit" ''
     set -u
     set -o pipefail
 
@@ -65,9 +65,13 @@ let
     }
     printf "Running pre-commit hooks ...\n"
 
-    ${concatStringsSep "\n" (map (hook: ''
+    ${concatStringsSep "\n" (
+    map (
+      hook: ''
         run_hook "${hook.path}" "${hook.name}"
-    '') hooks)}
+      ''
+    ) hooks
+  )}
 
     # Run local and legacy hooks
     if [ -d "$GIT_DIR/pre-commit.local.d" ]; then
@@ -114,9 +118,10 @@ let
 
     [ -L "$GIT_HOOKS_DIR/pre-commit" ] && unlink "$GIT_HOOKS_DIR/pre-commit"
 
-    ln -s ${(pre-commit {inherit hooks;})}/bin/pre-commit "$GIT_HOOKS_DIR/pre-commit"
+    ln -s ${(pre-commit { inherit hooks; })}/bin/pre-commit "$GIT_HOOKS_DIR/pre-commit"
   '';
-in {
+in
+{
   install = install;
 
   hooks = import ./hooks { inherit pkgs lib; };
