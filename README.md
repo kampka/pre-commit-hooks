@@ -74,6 +74,31 @@ If you want to keep some hooks local, eg. you do not want to force them on your 
 you can place them into the `$GIT_DIR/hooks/pre-commit.local.d/` directory.
 Every executable in that directory will be considered a valid hook script.
 
+### Return codes
+The `pre-commit-hook` executable interprets the return code of hook scripts do decide which action to take.
+
+ * 0 (OK) - The hook as evaluated correctly and found no issues preventing a commit.  
+   This passes the commit.
+ * 123 (SKIP) - The hook has no targets (eg. no source code file was changed in this commit) and does not execute the main hook program.  
+   This will mark the hook as skipped but it still pases the commit.
+ * 1 (FAIL) - Everything other than 0 or 123 will mark the hook as failed.  
+   This will not pass the commit.
+
+Example:
+```shell
+changedFiles="$(git diff --cached --name-only --diff-filter=ACM | xargs grep -lE '^#!/.*(sh|bash|ksh)' )"
+if [ -z "$changedFiles" ]; then
+    # There are no files in the git index that start with a shell shebang so there is nothing to check. Skipping the hook.
+    exit 123
+fi
+# Lets run the real check on the index files
+if ! shellcheck -a $changedFiles; then
+    # Whoops, the check has failed, lets not commit this ...
+    exit 1
+fi
+# Everything looks good, lets commit!
+exit 0
+```
 
 ## Acknowledgement
 This project is highly in inspired by the [`nix-pre-commit-hooks`](https://github.com/hercules-ci/nix-pre-commit-hooks/) project.
