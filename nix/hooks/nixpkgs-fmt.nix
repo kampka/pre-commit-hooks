@@ -18,7 +18,10 @@ let
       unset GIT_DIR
       changedFiles="$(git diff --cached --name-only --diff-filter=ACM '*.nix')"
       [ -z "$changedFiles" ] && exit 123
-      exec ${nixpkgsFmtPkg}/bin/nixpkgs-fmt --check $changedFiles
+      if ! ${nixpkgsFmtPkg}/bin/nixpkgs-fmt --check $changedFiles; then
+        exit 1
+      fi
+      exit 0
     '';
 in
 {

@@ -3,7 +3,10 @@
 let
   hookScript = { terraformPkg }: ''
     cd $GIT_DIR
-    ${terraformPkg}/bin/terraform fmt --check=True
+    if ! ${terraformPkg}/bin/terraform fmt --check=True ; then
+      exit 1
+    fi
+    exit 0
   '';
 in
 {

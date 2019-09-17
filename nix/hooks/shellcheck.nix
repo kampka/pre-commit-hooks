@@ -9,7 +9,10 @@ let
       unset GIT_DIR
       changedFiles="$(git diff --cached --name-only --diff-filter=ACM | xargs grep -lE '^#!/.*(sh|bash|ksh)' )"
       [ -z "$changedFiles" ] && exit 123
-      ${shellcheckPkg}/bin/shellcheck -a -x $changedFiles
+      if ! ${shellcheckPkg}/bin/shellcheck -a -x $changedFiles ; then
+        exit 1
+      fi
+      exit 0
     '';
 in
 {
