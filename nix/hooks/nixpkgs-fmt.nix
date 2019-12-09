@@ -5,8 +5,8 @@ let
   defaultPkg = (
     import (
       builtins.fetchTarball {
-        url = "https://github.com/nix-community/nixpkgs-fmt/archive/v0.6.0.tar.gz";
-        sha256 = "18kvsgl3kpla33dp1nbpd1kdgndfqcmlwwpjls55fp4mlczf8lcx";
+        url = "https://github.com/nix-community/nixpkgs-fmt/archive/v0.6.1.tar.gz";
+        sha256 = "1iylldgyvrcarfigpbhicg6j6qyipfiqn7gybza7qajfzyprjqfa";
       }
     )
   ) {};
