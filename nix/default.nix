@@ -92,33 +92,37 @@ let
     set -eu
     set -o pipefail
 
-    if git config core.hooksPath; then
-        echo "Refusing to install pre-commit hooks when core.hooksPath is set." 1>&2
-        exit 1
+    if ! type -t git >/dev/null; then
+       echo 1>&2 "WARNING: pre-commit-hooks: git command not found; skipping installation."
+    else
+      if git config core.hooksPath; then
+          echo "Refusing to install pre-commit hooks when core.hooksPath is set." 1>&2
+          exit 1
+      fi
+      
+      GIT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+      if ! ([ -n "$GIT_DIR" ] && [ -d "$GIT_DIR" ]); then
+          echo "Failed to detect git root directory. Aborting" 1>&2
+          exit 1
+      fi
+  
+      GIT_HOOKS_DIR="$GIT_DIR/.git/hooks"
+      if ! [ -d "$GIT_HOOKS_DIR" ]; then
+          echo "Git hooks directory does not exist at $GIT_HOOKS_DIR" 1>&2
+          exit 1
+      fi
+  
+  
+      if [ -f "$GIT_HOOKS_DIR/pre-commit" ] && ! [ -L "$GIT_HOOKS_DIR/pre-commit" ]; then
+          echo "There is already a pre-commit hook installed in your git repository." 1>&2
+          echo "If you want to keep it, please move it to \$GIT_DIR/hooks/pre-commit.local.d before continuing." 1>&2
+          exit 1
+      fi
+  
+      [ -L "$GIT_HOOKS_DIR/pre-commit" ] && unlink "$GIT_HOOKS_DIR/pre-commit"
+  
+      ln -s ${(pre-commit { inherit hooks; })}/bin/pre-commit "$GIT_HOOKS_DIR/pre-commit"
     fi
-
-    GIT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-    if ! ([ -n "$GIT_DIR" ] && [ -d "$GIT_DIR" ]); then
-        echo "Failed to detect git root directory. Aborting" 1>&2
-        exit 1
-    fi
-
-    GIT_HOOKS_DIR="$GIT_DIR/.git/hooks"
-    if ! [ -d "$GIT_HOOKS_DIR" ]; then
-        echo "Git hooks directory does not exist at $GIT_HOOKS_DIR" 1>&2
-        exit 1
-    fi
-
-
-    if [ -f "$GIT_HOOKS_DIR/pre-commit" ] && ! [ -L "$GIT_HOOKS_DIR/pre-commit" ]; then
-        echo "There is already a pre-commit hook installed in your git repository." 1>&2
-        echo "If you want to keep it, please move it to \$GIT_DIR/hooks/pre-commit.local.d before continuing." 1>&2
-        exit 1
-    fi
-
-    [ -L "$GIT_HOOKS_DIR/pre-commit" ] && unlink "$GIT_HOOKS_DIR/pre-commit"
-
-    ln -s ${(pre-commit { inherit hooks; })}/bin/pre-commit "$GIT_HOOKS_DIR/pre-commit"
   '';
 in
 {
